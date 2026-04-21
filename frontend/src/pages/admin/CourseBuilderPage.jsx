@@ -1,6 +1,15 @@
 import ButtonLink from '@/components/common/ButtonLink';
 import PageShell from '@/components/common/PageShell';
-import { Plus, PencilLine, GripVertical, PlayCircle, FileText, CircleHelp } from 'lucide-react';
+import { courses } from '@/data/courses';
+import {
+  Plus,
+  PencilLine,
+  GripVertical,
+  PlayCircle,
+  FileText,
+  CircleHelp,
+} from 'lucide-react';
+import { Navigate, useParams } from 'react-router-dom';
 
 const modules = [
   {
@@ -32,12 +41,26 @@ const modules = [
 ];
 
 export default function CourseBuilderPage() {
+  const { courseId } = useParams();
+
+  const course = courses.find((item) => String(item.id) === String(courseId));
+
+  if (!course) {
+    return <Navigate to="/admin/courses" replace />;
+  }
+
+  const status = course.status ?? 'Published';
+
   return (
     <section>
       <PageShell
         title="Course Builder"
-        description="Structure course modules, lessons, and supporting resources before publishing."
-        action={<ButtonLink to="/admin/dashboard" variant="outline">Back to Dashboard</ButtonLink>}
+        description="Structure modules, lessons, and learning content for the selected course."
+        action={
+          <ButtonLink to="/admin/courses" variant="outline">
+            Back to Manage Courses
+          </ButtonLink>
+        }
       />
 
       <div className="grid gap-6 lg:grid-cols-[1.45fr,0.9fr]">
@@ -45,21 +68,27 @@ export default function CourseBuilderPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-slate-900">Digital Marketing Fundamentals</h2>
+                <h2 className="text-2xl font-semibold text-slate-900">{course.title}</h2>
                 <p className="mt-1 text-slate-600">
                   Organize modules, lessons, and course resources in one place.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
-                  Draft
+                <span
+                  className={`rounded-full px-3 py-1 font-medium ${
+                    status === 'Published'
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : 'bg-amber-100 text-amber-700'
+                  }`}
+                >
+                  {status}
                 </span>
                 <span className="rounded-full bg-slate-900 px-3 py-1 font-medium text-white">
-                  3 Modules
+                  {modules.length} Modules
                 </span>
                 <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
-                  8 Lessons
+                  {modules.reduce((sum, module) => sum + module.lessons.length, 0)} Lessons
                 </span>
               </div>
             </div>
@@ -145,26 +174,29 @@ export default function CourseBuilderPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">Course Settings</h2>
             <div className="mt-5 grid gap-4">
-              <InfoRow label="Category" value="Marketing" />
-              <InfoRow label="Level" value="Beginner" />
-              <InfoRow label="Price" value="$120" />
-              <InfoRow label="Status" value="Draft" />
+              <InfoRow label="Category" value={course.category} />
+              <InfoRow label="Level" value={course.level} />
+              <InfoRow label="Price" value={course.formattedPrice} />
+              <InfoRow label="Status" value={status} />
             </div>
 
             <div className="mt-6 grid gap-3">
               <button className="rounded-2xl bg-slate-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800">
                 Save Changes
               </button>
-              <button className="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-900 transition hover:bg-slate-50">
-                Publish Course
-              </button>
+              <ButtonLink
+                to={`/admin/courses/${course.id}/edit`}
+                variant="outline"
+              >
+                Edit Course Details
+              </ButtonLink>
             </div>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">Content Summary</h2>
             <div className="mt-5 grid gap-3 text-sm">
-              <SummaryRow label="Total modules" value="3" />
+              <SummaryRow label="Total modules" value={String(modules.length)} />
               <SummaryRow label="Video lessons" value="4" />
               <SummaryRow label="Documents" value="2" />
               <SummaryRow label="Quizzes / Assignments" value="2" />
@@ -174,8 +206,8 @@ export default function CourseBuilderPage() {
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">Notes</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              This page is meant to validate the admin course structuring flow before backend implementation.
-              Later, module ordering, drag-and-drop, uploads, and publishing logic can be connected to APIs.
+              This page is meant to validate the course structuring flow before backend implementation.
+              Later, module ordering, uploads, and publishing logic can be connected to APIs.
             </p>
           </div>
         </div>

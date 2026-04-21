@@ -1,5 +1,6 @@
 import DashboardLayout from '@/layouts/DashboardLayout';
 import PublicLayout from '@/layouts/PublicLayout';
+import AdminLayout from '@/layouts/AdminLayout';
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import LearnerDashboardPage from '@/pages/learner/LearnerDashboardPage';
@@ -14,6 +15,11 @@ import CertificatesPage from '@/pages/learner/CertificatesPage';
 import QuizPage from '@/pages/learner/QuizPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import ManageCoursesPage from '@/pages/admin/ManageCoursesPage';
+import ManageUsersPage from '@/pages/admin/ManageUsersPage';
+import EditUserPage from '@/pages/admin/EditUserPage';
+import EnrollmentsPage from '@/pages/admin/EnrollmentsPage';
+import EditCoursePage from '@/pages/admin/EditCoursePage';
+
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 export default function AppRouter() {
@@ -29,14 +35,21 @@ export default function AppRouter() {
 
       <Route element={<DashboardLayout />}>
         <Route path="/learner/dashboard" element={<LearnerDashboardPage />} />
+        <Route path="/learner/learning" element={<LearningPage />} />
         {/*<Route path="/learner/my-courses" element={<MyCoursesPage />} />*/}
         <Route path="/learner/certificates" element={<CertificatesPage />} />
         <Route path="/learner/courses/:courseId/quiz/:quizId" element={<QuizPage />} />
-        <Route path="/learner/learning" element={<LearningPage />} />
+      </Route>
+
+      <Route element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
         <Route path="/admin/courses" element={<ManageCoursesPage />} />
-        <Route path="/admin/course-builder" element={<CourseBuilderPage />} />
+        <Route path="/admin/courses/:courseId/edit" element={<EditCoursePage />} />
+        <Route path="/admin/courses/:courseId/builder" element={<CourseBuilderPage />} />
         <Route path="/admin/create-course" element={<CreateCoursePage />} />
+        <Route path="/admin/users" element={<ManageUsersPage />} />
+        <Route path="/admin/users/:userId/edit" element={<EditUserPage />} />
+        <Route path="/admin/enrollments" element={<EnrollmentsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
