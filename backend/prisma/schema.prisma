@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  password    String
+  role        Role         @default(LEARNER)
+  status      UserStatus   @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  enrollments Enrollment[]
+}
+
+model Course {
+  id              String       @id @default(uuid())
+  title           String
+  description     String
+  longDescription String?
+  category        String
+  type            CourseType
+  price           Float        @default(0)
+  level           String
+  duration        String
+  instructor      String       @default("NEXT Academy")
+  thumbnail       String?
+  status          CourseStatus @default(DRAFT)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  enrollments     Enrollment[]
+}
+
+model Enrollment {
+  id            String        @id @default(uuid())
+  userId        String
+  courseId      String
+  paymentStatus PaymentStatus
+  progress      Int           @default(0)
+  enrolledAt    DateTime      @default(now())
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course        Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+enum Role {
+  ADMIN
+  LEARNER
+  FINANCE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CourseType {
+  FREE
+  PAID
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  UNPUBLISHED
+}
+
+enum PaymentStatus {
+  FREE
+  PAID
+}
