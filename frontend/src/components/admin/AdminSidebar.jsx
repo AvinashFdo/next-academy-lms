@@ -129,19 +129,6 @@ export default function AdminSidebar({ collapsed, onToggle }) {
             );
           })}
         </nav>
-
-        <div className="mt-auto rounded-2xl bg-slate-50 p-4">
-          {!collapsed ? (
-            <>
-              <div className="text-sm font-medium text-slate-900">Admin Workspace</div>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Manage course structure, content, users, and future reporting tools.
-              </p>
-            </>
-          ) : (
-            <div className="mx-auto h-8 w-8 rounded-xl bg-slate-200" />
-          )}
-        </div>
       </div>
     </aside>
   );
